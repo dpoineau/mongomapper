@@ -57,6 +57,15 @@ module MongoMapper
         end
 
         def get(value)
+          # Using Mongomapper 0.12 defaults behavior
+          if value.nil?
+            def_val = default_value
+            if !def_val.nil?
+              return def_val
+            end
+          end
+          # End mongomapper 0.12 behavior
+
           # Special Case: Generate default _id on access
           value = default_value if @is_id and !value
 
