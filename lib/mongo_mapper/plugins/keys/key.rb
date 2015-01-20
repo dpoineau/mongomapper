@@ -57,6 +57,18 @@ module MongoMapper
         end
 
         def get(value)
+          # Using Mongomapper 0.12 defaults behavior
+          if value.nil? && !default_value.nil?
+            if default_value.respond_to?(:call)
+              return default_value.call
+            else
+              # Using Marshal is easiest way to get a copy of mutable objects
+              # without getting an error on immutable objects
+              return Marshal.load(Marshal.dump(default_value))
+            end
+          end
+          # End mongomapper 0.12 behavior
+
           # Special Case: Generate default _id on access
           value = default_value if @is_id and !value
 
